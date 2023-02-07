@@ -57,25 +57,52 @@ def clean_csv_data():
 clean_csv_data()
 
 
-# conn = psycopg2.connect(
-#     host=DB_HOST,
-#     database=DB_NAME,
-#     user=DB_USER,
-#     password=DB_PASSWORD
-# )
+conn = psycopg2.connect(
+    host=DB_HOST,
+    database=DB_NAME,
+    user=DB_USER,
+    password=DB_PASSWORD
+)
 
-# cursor = conn.cursor()
 
-# with open('file.csv', 'r') as f:
-#     reader = csv.reader(f)
-#     columns = next(reader)
-#     query = 'CREATE TABLE IF NOT EXISTS table_name ({0})'
-#     cursor.execute(query.format(','.join(columns)))
-#     for data in reader:
-#         query = 'INSERT INTO table_name ({0}) VALUES ({1})'
-#         cursor.execute(query.format(','.join(columns),
-#                        ','.join("'"+item+"'" for item in data)))
+# Open a cursor to perform database operations
+cur = conn.cursor()
 
-# conn.commit()
-# cursor.close()
-# conn.close()
+# Create a table to store the data
+cur.execute("""
+CREATE TABLE IF NOT EXISTS shamiri_data (
+    id integer PRIMARY KEY,
+    first_name text,
+    last_name text,
+    email text,
+    gender text,
+    ip_address text,
+    is_admin boolean
+);
+""")
+
+# Open the CSV file
+with open("CLEANED_MOCK_DATA.csv", "r") as file:
+    # Create a reader object to read the CSV data
+    reader = csv.reader(file)
+
+    # Skip the header row
+    next(reader)
+
+    # Insert the data into the database
+    for row in reader:
+        # Handle the empty string in the is_admin column
+        if row[-1] == "":
+            row[-1] = False
+        # Create and execute the query
+        cur.execute("""
+        INSERT INTO shamiri_data (id, first_name, last_name, email, gender, ip_address, is_admin)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """, row)
+
+# Commit the changes to the database
+conn.commit()
+
+# Close the cursor and connection
+cur.close()
+conn.close()
