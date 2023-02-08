@@ -1,7 +1,7 @@
 # Shamiri Institute - Tech Product Intern Assessment
 
 
-Project solely for the purpose of satisfying job requirements for the position of `Tech Product Intern` at Shamiri Institute.
+Project solely for the purpose of satisfying job assessment requirements for the position of `Tech Product Intern` at Shamiri Institute.
 
 ## Overview
 The purpose of this project is to create a script that will clean and insert data from a csv file into a Postgres database.
